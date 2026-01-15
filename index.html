@@ -17,9 +17,7 @@ body {
   height: 100vh;
 }
 
-.wrap {
-  text-align: center;
-}
+.wrap { text-align: center; }
 
 #time {
   font-size: 180px;
@@ -35,24 +33,20 @@ body {
   margin-top: 20px;
   display: flex;
   justify-content: center;
-  gap: 32px;
-  font-size: 48px;
+  gap: 40px;
+  font-size: 52px;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* 絵文字は span＋固定サイズ */
+/* テキストアイコン（iPad2安定） */
 .icon {
-  font-size: 64px;
-  line-height: 1;
-}
-
-.wind {
   font-size: 56px;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -63,16 +57,16 @@ body {
 
   <div id="weather">
     <div class="item">
-      <span id="icon" class="icon">☀️</span>
+      <span class="icon">☀</span>
       <span id="temp">--°C</span>
     </div>
     <div class="item">
-      <span class="icon">💧</span>
+      <span class="icon">H</span>
       <span id="humidity">--%</span>
     </div>
     <div class="item">
-      <span class="icon wind">≋</span>
-      <span id="wind">-- m/s</span>
+      <span class="icon">W</span>
+      <span id="wind">--m/s</span>
     </div>
   </div>
 
@@ -80,70 +74,35 @@ body {
 </div>
 
 <script>
+/* ===== 時計 ===== */
 var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-function z(n) {
-  return n < 10 ? "0" + n : n;
-}
+function z(n){ return n < 10 ? "0"+n : n; }
 
-function updateClock() {
-  var now = new Date();
-  var h = z(now.getHours());
-  var m = z(now.getMinutes());
-  var s = z(now.getSeconds());
-
+function updateClock(){
+  var d = new Date();
   document.getElementById("time").innerHTML =
-    h + ":" + m + ":" + s;
-
+    z(d.getHours()) + ":" + z(d.getMinutes()) + ":" + z(d.getSeconds());
   document.getElementById("date").innerHTML =
-    now.getFullYear() + "." +
-    (now.getMonth() + 1) + "." +
-    now.getDate() + " " +
-    weekdays[now.getDay()];
+    d.getFullYear()+"."+(d.getMonth()+1)+"."+d.getDate()+" "+weekdays[d.getDay()];
 }
-
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
-/* 天気アイコン */
-function weatherIcon(code) {
-  if (code === 0) return "☀️";
-  if (code <= 2) return "⛅";
-  if (code <= 3) return "☁️";
-  if (code <= 48) return "🌫️";
-  if (code <= 67) return "🌧️";
-  if (code <= 77) return "🌨️";
-  if (code <= 82) return "🌦️";
-  if (code <= 99) return "⛈️";
-  return "❓";
+/* ===== 天気（HTTP + JSONP）===== */
+function weatherCallback(data){
+  document.getElementById("temp").innerHTML = data.main.temp + "°C";
+  document.getElementById("humidity").innerHTML = data.main.humidity + "%";
+  document.getElementById("wind").innerHTML = data.wind.speed + "m/s";
 }
 
-/* XMLHttpRequest（iOS9対応） */
-var xhr = new XMLHttpRequest();
-xhr.open(
-  "GET",
-  "https://api.open-meteo.com/v1/forecast?latitude=35.636&longitude=140.091&current_weather=true&hourly=relativehumidity_2m",
-  true
-);
-
-xhr.onreadystatechange = function () {
-  if (xhr.readyState === 4 && xhr.status === 200) {
-    var data = JSON.parse(xhr.responseText);
-
-    document.getElementById("icon").innerHTML =
-      weatherIcon(data.current_weather.weathercode);
-
-    document.getElementById("temp").innerHTML =
-      data.current_weather.temperature + "°C";
-
-    document.getElementById("humidity").innerHTML =
-      data.hourly.relativehumidity_2m[0] + "%";
-
-    document.getElementById("wind").innerHTML =
-      data.current_weather.windspeed + " m/s";
-  }
-};
-xhr.send();
+/* 千葉（稲毛） */
+var script = document.createElement("script");
+script.src =
+  "http://api.openweathermap.org/data/2.5/weather" +
+  "?q=Chiba,jp&units=metric&callback=weatherCallback" +
+  "&appid=YOUR_API_KEY";
+document.body.appendChild(script);
 </script>
 </body>
 </html>
