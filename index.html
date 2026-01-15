@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clock iPad2対応版</title>
+<title>Clock iPad2 完全版</title>
 <style>
 html, body {
   margin: 0; padding: 0;
@@ -19,26 +19,56 @@ body {
   align-items: center;
 }
 .wrap { text-align: center; }
+
 #time { font-size: 160px; font-weight: bold; }
 #date { font-size: 48px; margin-top: 20px; }
-#weather { margin-top: 20px; display:flex; justify-content:center; gap:40px; font-size:48px; }
+
+#weather {
+  margin-top: 20px;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  font-size:48px;
+}
+
 .item { display:flex; align-items:center; gap:12px; }
-.icon { font-size:56px; font-weight:bold; }
+
+/* アイコン共通スタイル */
+.icon {
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* 個別アイコンサイズ調整 */
+.weather-icon { font-size: 64px; }  /* 天気 */
+.humidity-icon { font-size: 64px; } /* 湿度 */
+.wind-icon { font-size: 64px; }     /* 風速 */
 </style>
 </head>
 <body>
 <div class="wrap">
   <div id="time">00:00:00</div>
+
   <div id="weather">
-    <div class="item"><span class="icon">☀</span><span id="temp">5°C</span></div>
-    <div class="item"><span class="icon">💧</span><span id="humidity">60%</span></div>
-    <div class="item"><span class="icon">≋</span><span id="wind">3 m/s</span></div>
+    <div class="item">
+      <span class="icon weather-icon">☀</span>
+      <span id="temp">5°C</span>
+    </div>
+    <div class="item">
+      <span class="icon humidity-icon">💧</span>
+      <span id="humidity">60%</span>
+    </div>
+    <div class="item">
+      <span class="icon wind-icon">≋</span>
+      <span id="wind">3 m/s</span>
+    </div>
   </div>
+
   <div id="date">----</div>
 </div>
 
 <script>
-// 時計
+// ===== 時計 =====
 var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 function z(n){return n<10?"0"+n:n;}
 function updateClock(){
@@ -49,7 +79,7 @@ function updateClock(){
 setInterval(updateClock,1000);
 updateClock();
 
-// 天気固定（iPad2安定版）
+// ===== 天気固定（iPad2安定版） =====
 document.getElementById("temp").innerHTML = "5°C";
 document.getElementById("humidity").innerHTML = "60%";
 document.getElementById("wind").innerHTML = "3 m/s";
