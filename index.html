@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inage Clock</title>
+<title>Clock</title>
 
 <style>
 body {
@@ -17,7 +17,9 @@ body {
   height: 100vh;
 }
 
-.wrap { text-align: center; }
+.wrap {
+  text-align: center;
+}
 
 #time {
   font-size: 180px;
@@ -43,9 +45,14 @@ body {
   gap: 10px;
 }
 
+/* 絵文字は span＋固定サイズ */
 .icon {
   font-size: 64px;
   line-height: 1;
+}
+
+.wind {
+  font-size: 56px;
 }
 </style>
 </head>
@@ -64,7 +71,7 @@ body {
       <span id="humidity">--%</span>
     </div>
     <div class="item">
-      <span class="icon">≋</span>
+      <span class="icon wind">≋</span>
       <span id="wind">-- m/s</span>
     </div>
   </div>
@@ -73,7 +80,6 @@ body {
 </div>
 
 <script>
-/* ===== 時計 ===== */
 var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function z(n) {
@@ -82,8 +88,12 @@ function z(n) {
 
 function updateClock() {
   var now = new Date();
+  var h = z(now.getHours());
+  var m = z(now.getMinutes());
+  var s = z(now.getSeconds());
+
   document.getElementById("time").innerHTML =
-    z(now.getHours()) + ":" + z(now.getMinutes()) + ":" + z(now.getSeconds());
+    h + ":" + m + ":" + s;
 
   document.getElementById("date").innerHTML =
     now.getFullYear() + "." +
@@ -95,7 +105,7 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-/* ===== 天気アイコン ===== */
+/* 天気アイコン */
 function weatherIcon(code) {
   if (code === 0) return "☀️";
   if (code <= 2) return "⛅";
@@ -108,11 +118,11 @@ function weatherIcon(code) {
   return "❓";
 }
 
-/* ===== 天気取得（iPad2対応・安定版） ===== */
+/* XMLHttpRequest（iOS9対応） */
 var xhr = new XMLHttpRequest();
 xhr.open(
   "GET",
-  "https://api.open-meteo.com/v1/forecast?latitude=35.636&longitude=140.091&current_weather=true",
+  "https://api.open-meteo.com/v1/forecast?latitude=35.636&longitude=140.091&current_weather=true&hourly=relativehumidity_2m",
   true
 );
 
@@ -126,14 +136,13 @@ xhr.onreadystatechange = function () {
     document.getElementById("temp").innerHTML =
       data.current_weather.temperature + "°C";
 
+    document.getElementById("humidity").innerHTML =
+      data.hourly.relativehumidity_2m[0] + "%";
+
     document.getElementById("wind").innerHTML =
       data.current_weather.windspeed + " m/s";
-
-    /* 湿度はiPad2安定性優先で固定表示 */
-    document.getElementById("humidity").innerHTML = "--%";
   }
 };
-
 xhr.send();
 </script>
 </body>
