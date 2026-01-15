@@ -52,3 +52,89 @@ body {
 
 <body>
 <div class="wrap">
+  <div id="time">00:00:00</div>
+
+  <div id="weather">
+    <div class="item">
+      <span id="icon" class="icon">☀️</span>
+      <span id="temp">--°C</span>
+    </div>
+    <div class="item">
+      <span class="icon">💧</span>
+      <span id="humidity">--%</span>
+    </div>
+    <div class="item">
+      <span class="icon">≋</span>
+      <span id="wind">-- m/s</span>
+    </div>
+  </div>
+
+  <div id="date">----</div>
+</div>
+
+<script>
+/* ===== 時計 ===== */
+var weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+function z(n) {
+  return n < 10 ? "0" + n : n;
+}
+
+function updateClock() {
+  var now = new Date();
+  document.getElementById("time").innerHTML =
+    z(now.getHours()) + ":" + z(now.getMinutes()) + ":" + z(now.getSeconds());
+
+  document.getElementById("date").innerHTML =
+    now.getFullYear() + "." +
+    (now.getMonth() + 1) + "." +
+    now.getDate() + " " +
+    weekdays[now.getDay()];
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ===== 天気アイコン ===== */
+function weatherIcon(code) {
+  if (code === 0) return "☀️";
+  if (code <= 2) return "⛅";
+  if (code <= 3) return "☁️";
+  if (code <= 48) return "🌫️";
+  if (code <= 67) return "🌧️";
+  if (code <= 77) return "🌨️";
+  if (code <= 82) return "🌦️";
+  if (code <= 99) return "⛈️";
+  return "❓";
+}
+
+/* ===== 天気取得（iPad2対応・安定版） ===== */
+var xhr = new XMLHttpRequest();
+xhr.open(
+  "GET",
+  "https://api.open-meteo.com/v1/forecast?latitude=35.636&longitude=140.091&current_weather=true",
+  true
+);
+
+xhr.onreadystatechange = function () {
+  if (xhr.readyState === 4 && xhr.status === 200) {
+    var data = JSON.parse(xhr.responseText);
+
+    document.getElementById("icon").innerHTML =
+      weatherIcon(data.current_weather.weathercode);
+
+    document.getElementById("temp").innerHTML =
+      data.current_weather.temperature + "°C";
+
+    document.getElementById("wind").innerHTML =
+      data.current_weather.windspeed + " m/s";
+
+    /* 湿度はiPad2安定性優先で固定表示 */
+    document.getElementById("humidity").innerHTML = "--%";
+  }
+};
+
+xhr.send();
+</script>
+</body>
+</html>
