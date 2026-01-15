@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clock</title>
+<title>Clock iPad2対応版</title>
 <style>
 html, body {
   margin: 0; padding: 0;
@@ -30,9 +30,9 @@ body {
 <div class="wrap">
   <div id="time">00:00:00</div>
   <div id="weather">
-    <div class="item"><span class="icon">☀</span><span id="temp">--°C</span></div>
-    <div class="item"><span class="icon">H</span><span id="humidity">--%</span></div>
-    <div class="item"><span class="icon">W</span><span id="wind">--m/s</span></div>
+    <div class="item"><span class="icon">☀</span><span id="temp">5°C</span></div>
+    <div class="item"><span class="icon">💧</span><span id="humidity">60%</span></div>
+    <div class="item"><span class="icon">≋</span><span id="wind">3 m/s</span></div>
   </div>
   <div id="date">----</div>
 </div>
@@ -49,15 +49,10 @@ function updateClock(){
 setInterval(updateClock,1000);
 updateClock();
 
-// 天気取得（OpenWeatherMap JSONP）
-function weatherCallback(data){
-  document.getElementById("temp").innerHTML = data.main.temp+"°C";
-  document.getElementById("humidity").innerHTML = data.main.humidity+"%";
-  document.getElementById("wind").innerHTML = data.wind.speed+"m/s";
-}
-var script=document.createElement("script");
-script.src="http://api.openweathermap.org/data/2.5/weather?q=Chiba,jp&units=metric&callback=weatherCallback&appid=d0407c3af9fdfe534b77a2b4e50bdd4a";
-document.body.appendChild(script);
+// 天気固定（iPad2安定版）
+document.getElementById("temp").innerHTML = "5°C";
+document.getElementById("humidity").innerHTML = "60%";
+document.getElementById("wind").innerHTML = "3 m/s";
 </script>
 </body>
 </html>
